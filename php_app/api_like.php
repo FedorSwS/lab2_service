@@ -1,5 +1,5 @@
 <?php
-// Серверный обработчик AJAX-запросов для увеличения/уменьшения счётчика Like
+
 header('Content-Type: application/json; charset=utf-8');
 require_once 'config.php';
 
@@ -23,7 +23,6 @@ if ($newsId <= 0) {
     exit;
 }
 
-// Проверяем существование новости
 $stmtCheckNews = mysqli_prepare($link, 'SELECT likes_count FROM news WHERE id = ?');
 mysqli_stmt_bind_param($stmtCheckNews, 'i', $newsId);
 mysqli_stmt_execute($stmtCheckNews);
@@ -37,7 +36,6 @@ if (!$newsRow) {
     exit;
 }
 
-// Проверяем, ставил ли текущий клиент лайк этой новости
 $stmtCheckLike = mysqli_prepare($link, 'SELECT id FROM news_likes WHERE news_id = ? AND client_token = ?');
 mysqli_stmt_bind_param($stmtCheckLike, 'is', $newsId, $clientToken);
 mysqli_stmt_execute($stmtCheckLike);
@@ -49,7 +47,7 @@ mysqli_begin_transaction($link);
 
 try {
     if ($existingLike) {
-        // Уменьшение счётчика (снятие лайка)
+        
         $stmtDel = mysqli_prepare($link, 'DELETE FROM news_likes WHERE id = ?');
         mysqli_stmt_bind_param($stmtDel, 'i', $existingLike['id']);
         mysqli_stmt_execute($stmtDel);
@@ -62,7 +60,7 @@ try {
 
         $liked = false;
     } else {
-        // Увеличение счётчика (добавление лайка)
+        
         $stmtIns = mysqli_prepare($link, 'INSERT INTO news_likes (news_id, client_token) VALUES (?, ?)');
         mysqli_stmt_bind_param($stmtIns, 'is', $newsId, $clientToken);
         mysqli_stmt_execute($stmtIns);
@@ -76,7 +74,7 @@ try {
         $liked = true;
     }
 
-    // Получаем актуальное значение счётчика
+    
     $stmtCount = mysqli_prepare($link, 'SELECT likes_count FROM news WHERE id = ?');
     mysqli_stmt_bind_param($stmtCount, 'i', $newsId);
     mysqli_stmt_execute($stmtCount);

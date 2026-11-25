@@ -1,7 +1,6 @@
 <?php
 require_once 'config.php';
 
-// Получаем все новости вместе с признаком, поставил ли текущий пользователь лайк
 $sql = "
     SELECT n.id, n.title, n.summary, n.content, n.published_at, n.likes_count,
            CASE WHEN nl.id IS NOT NULL THEN 1 ELSE 0 END AS is_liked
@@ -31,7 +30,6 @@ mysqli_close($link);
 <header class="site-header">
     <div class="container">
         <h1>Новостной портал</h1>
-        <p class="subtitle">Лабораторная работа №2 (Вариант 4) — Счётчик «Like» на PHP + MySQL + AJAX</p>
     </div>
 </header>
 
@@ -39,7 +37,7 @@ mysqli_close($link);
     <div id="status-banner" class="status-banner" hidden></div>
 
     <?php if (empty($newsList)): ?>
-        <p class="empty-msg">Новости пока не добавлены. Импортируйте файл <code>database.sql</code>.</p>
+        <p class="empty-msg">Новости не добавлены.</p>
     <?php else: ?>
         <?php foreach ($newsList as $item): ?>
             <article class="news-card" data-news-id="<?= (int)$item['id'] ?>">
